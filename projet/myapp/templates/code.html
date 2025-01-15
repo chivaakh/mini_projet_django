@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bibliothèque - Connexion/Inscription</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <!-- <link rel="stylesheet" href="/static/styles.css"> -->
+   <style>
+    @import url(https://fonts.googleapis.com/css?family=Poppins:300);
+ *, *:before, *:after {
+	 box-sizing: border-box;
+}
+ body {
+  height: 100vh;
+	 background: #01939c;
+   overflow-y: hidden!important;
+	 font-family: 'Poppins', sans-serif;
+}
+ a {
+	 text-decoration: none;
+	 color: #01939c;
+	 transition: 0.5s ease;
+}
+ a:hover {
+	 color: #179b77;
+}
+ .form {
+	 background: #12141d;
+	 padding: 40px;
+	 max-width: 600px;
+	 margin: 40px auto;
+	 border-radius: 15px;
+	 box-shadow: 0 4px 10px 4px rgba(19, 35, 47, .3);
+}
+ .tab-group {
+	 list-style: none;
+	 padding: 0;
+	 margin: 0 0 40px 0;
+}
+ .tab-group:after {
+	 content: "";
+	 display: table;
+	 clear: both;
+}
+ .tab-group li a {
+	 display: block;
+	 text-decoration: none;
+	 padding: 15px;
+	 background: rgba(160, 179, 176, .25);
+	 color: #a0b3b0;
+	 font-size: 20px;
+	 float: left;
+	 width: 48%;
+	 text-align: center;
+	 cursor: pointer;
+	 transition: 0.5s ease;
+}
+ .tab-group li a:hover {
+	 background: #01939c;
+	 color: #fff;
+}
+ .tab-group .active a {
+	 background: #01939c;
+	 color: #fff;
+}
+ .tab-content > div:last-child {
+	 display: none;
+}
+.tab-group{
+  border-radius: 15px!important;
+  margin: 20px;
+}
+ h1 {
+	 text-align: center;
+	 color: #fff;
+	 font-weight: 300;
+	 margin: 0 0 40px;
+}
+ input, textarea {
+	 font-size: 17px;
+	 display: block;
+	 width: 100%;
+	 height: 100%;
+	 padding: 5px 10px;
+	 background: none;
+	 background-image: none;
+	 border: 1px solid #01939c;
+	 color: #fff;
+	 border-radius: 6px;
+	 transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+ textarea {
+	 border: 2px solid #01939c;
+	 resize: vertical;
+}
+ .field-wrap {
+	 position: relative;
+	 margin-bottom: 40px;
+}
+ .top-row:after {
+	 content: "";
+	 display: table;
+	 clear: both;
+}
+ .top-row > div {
+	 float: left;
+	 width: 48%;
+	 margin-right: 4%;
+}
+ .top-row > div:last-child {
+	 margin: 0;
+}
+ .button {
+	 border: 0;
+	 outline: none;
+	 border-radius: 15px;
+	 padding: 15px 0;
+	 font-size: 20px;
+	 font-weight: 400;
+	 letter-spacing: 0.1em;
+	 background: #01939c;
+   cursor: pointer;
+	 color: #fff;
+	 transition: all 0.5s ease;
+	 -webkit-appearance: none;
+}
+ .button:hover, .button:focus {
+	 background: #025c61;
+}
+ .button-block {
+	 display: block;
+	 width: 100%;
+}
+ .forgot {
+	 margin-top: -20px;
+	 text-align: right;
+}
+ 
+.error {
+    color: green;
+    font-weight: bold;
+}
+
+
+   </style>
+</head>
+<body>
+  <div class="form">
+    <ul class="tab-group">
+      <li class="tab active"><a href="#signup">Sign Up</a></li>
+      <li class="tab"><a href="#login">Log In</a></li>
+    </ul>
+    <div class="tab-content">
+      <!-- Formulaire d'inscription -->
+      <div id="signup">
+        {% if messages %}
+  <ul>
+    {% for message in messages %}
+      <li class="error">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+        <h1>Créer un compte</h1>
+        <form action="/signup/" method="post">
+          {% csrf_token %}
+          <div class="top-row">
+            <div class="field-wrap">
+              <input type="text" name="first_name" placeholder="Prénom" required>
+            </div>
+            <div class="field-wrap">
+              <input type="text" name="last_name" placeholder="Nom" required>
+            </div>
+          </div>
+          <div class="field-wrap">
+            <input type="email" name="email" placeholder="Adresse e-mail" required>
+          </div>
+          <div class="field-wrap">
+            <input type="password" name="password" placeholder="Mot de passe" required>
+          </div>
+          <button type="submit" class="button button-block">S'inscrire</button>
+        </form>
+      </div>
+
+      <!-- Formulaire de connexion -->
+      <div id="login">
+        <h1>Connexion</h1>
+        <form action="/login/" method="post">
+          {% csrf_token %}
+          <div class="field-wrap">
+            <input type="email" name="email" placeholder="Adresse e-mail" required>
+          </div>
+          <div class="field-wrap">
+            <input type="password" name="password" placeholder="Mot de passe" required>
+          </div>
+          <button type="submit" class="button button-block">Se connecter</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.tab a').forEach(tab => {
+      tab.addEventListener('click', function (e) {
+        e.preventDefault();
+        const activeTab = this.parentElement;
+        const targetId = this.getAttribute('href').substring(1);
+
+        activeTab.classList.add('active');
+        activeTab.parentElement
+          .querySelectorAll('.tab')
+          .forEach(sibling => sibling !== activeTab && sibling.classList.remove('active'));
+
+        document.querySelectorAll('.tab-content > div').forEach(section => {
+          if (section.id === targetId) {
+            section.style.display = 'block';
+          } else {
+            section.style.display = 'none';
+          }
+        });
+      });
+    });
+
+   
+    document.querySelector('.tab.active a').click();
+  </script>
+</body>
+</html>

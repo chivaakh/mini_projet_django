@@ -1,34 +1,46 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
+
+class MyUser(models.Model):
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+    is_admin = models.BooleanField(default=False)  # True pour l'administrateur, False pour un utilisateur simple
+
+    def __str__(self):
+        return self.email
+
+# Modèle pour les utilisateurs
+class LibraryUser(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=255)  # Assurez-vous de sécuriser les mots de passe (hashing)
+    is_admin = models.BooleanField(default=False)  # Pour différencier admin et utilisateur simple
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({'Admin' if self.is_admin else 'User'})"
 
 # Modèle pour les livres
-class Livre(models.Model):
-    titre = models.CharField(max_length=255)
-    auteur = models.CharField(max_length=255)
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=100)
     genre = models.CharField(max_length=100)
-    annee_publication = models.IntegerField()
-    exemplaires_disponibles = models.PositiveIntegerField()
+    publication_year = models.PositiveIntegerField()
+    copies_available = models.PositiveIntegerField(default=1)
 
     def __str__(self):
-        return f"{self.titre} - {self.auteur}"
+        return self.title
 
 # Modèle pour les emprunts
-class Emprunt(models.Model):
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
-    livre = models.ForeignKey(Livre, on_delete=models.CASCADE)
-    date_emprunt = models.DateField(auto_now_add=True)
-    date_retour = models.DateField(null=True, blank=True)
-    est_retourne = models.BooleanField(default=False)
+class Borrow(models.Model):
+    user = models.ForeignKey(LibraryUser, on_delete=models.CASCADE, related_name="borrows")
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="borrows")
+    borrow_date = models.DateTimeField(default=timezone.now)
+    return_date = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.utilisateur.username} a emprunté {self.livre.titre}"
+        return f"{self.user} borrowed {self.book}"
 
-# Modèle pour l'historique des emprunts
-class HistoriqueEmprunt(models.Model):
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE)
-    livre = models.ForeignKey(Livre, on_delete=models.CASCADE)
-    date_emprunt = models.DateField()
-    date_retour = models.DateField()
-
-    def __str__(self):
-        return f"Historique: {self.utilisateur.username} - {self.livre.titre}"
+    def is_returned(self):
+        return self.return_date is not None

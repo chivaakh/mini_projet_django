@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bibliothèque</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <header>
+    <h1>Bibliothèque</h1>
+    <a href="/logout/" class="button">Logout</a>
+  </header>
+  <main>
+    <h2>Livres disponibles</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Auteur</th>
+          <th>Genre</th>
+          <th>Année de publication</th>
+          <th>Copies disponibles</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>{{ book.title }}</td>
+          <td>{{ book.author }}</td>
+          <td>{{ book.genre }}</td>
+          <td>{{ book.publication_year }}</td>
+          <td>{{ book.available_copies }}</td>
+          <td>
+            {% if book.available_copies > 0 %}
+              <a href="/borrow/{{ book.id }}/" class="button small">Emprunter</a>
+            {% else %}
+              <span>Non disponible</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6">Aucun livre disponible.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Vos emprunts</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Date d'emprunt</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for borrow in request.user.borrow_set.all %}
+        <tr>
+          <td>{{ borrow.book.title }}</td>
+          <td>{{ borrow.borrowed_at }}</td>
+          <td>
+            {% if not borrow.returned %}
+              <a href="/return/{{ borrow.id }}/" class="button small">Rendre</a>
+            {% else %}
+              <span>Retourné</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="3">Aucun emprunt en cours.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
