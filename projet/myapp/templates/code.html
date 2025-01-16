@@ -185,7 +185,7 @@
       <!-- Formulaire de connexion -->
       <div id="login">
         <h1>Connexion</h1>
-        <form action="/login/" method="post">
+        <form method="POST" action="{% url 'login' %}">
           {% csrf_token %}
           <div class="field-wrap">
             <input type="email" name="email" placeholder="Adresse e-mail" required>

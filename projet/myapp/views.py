@@ -4,10 +4,21 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import LibraryUser, Book, Borrow
 from .models import MyUser
+from django.utils import timezone
+
+
 
 # Page d'accueil
 def home(request):
     return render(request, 'code.html')
+
+
+
+def about(request):
+    return render(request, 'about.html')
+
+
+
 
 # Inscription
 def signup(request):
@@ -44,29 +55,30 @@ def login_view(request):
         # Vérification pour un administrateur automatique
         if email == "admin@gmail.com" and password == "1234":
             user, created = MyUser.objects.get_or_create(email=email)
-            user.is_admin = True  # Assurez-vous que l'utilisateur est bien un admin
+            user.is_admin = True
             user.save()
-            # login(request, user)  # Connecte l'administrateur directement
-            return render(request,"admin_home.html") 
+            return redirect('admin_dashboard')
 
         # Rechercher l'utilisateur
         try:
             user = MyUser.objects.get(email=email)
         except MyUser.DoesNotExist:
             messages.error(request, "Email non enregistré. Veuillez vous inscrire.")
-            return redirect('/login/')
+            return redirect('login')
 
         # Vérifier le mot de passe
         if user.password != password:
             messages.error(request, "Email ou mot de passe incorrect.")
-            return redirect('/login/')
+            return redirect('login')
 
-        # Rediriger selon le rôle
+        # Redirection selon le rôle
         if user.is_admin:
-            return redirect('/admin_dashboard/')
+            return redirect('admin_dashboard')
         else:
-            return redirect('/user_dashboard/')
+            return redirect('user_dashboard')  # Redirige vers la vue "home"
     return render(request, "code.html")
+
+
 
 
 # Tableau de bord admin
@@ -128,3 +140,7 @@ def return_book(request, borrow_id):
         messages.success(request, "Livre retourné avec succès.")
     return redirect('books_list')
 
+
+
+def list_books(request):
+    return render(request, 'list_books.html')
