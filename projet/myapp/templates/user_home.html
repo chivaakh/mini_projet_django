@@ -387,11 +387,11 @@ section .main .main_img img{
 <body>
     
     <section>
-
+        {% load static %}
         <nav>
 
             <div class="logo">
-                <img src="image/logo.png">
+                <img src="{% static 'image/logo.png' %}">
             </div>
 
             <ul>
@@ -426,7 +426,7 @@ section .main .main_img img{
             </div>
 
             <div class="main_img">
-                <img src="image/table.png">
+                <img src="{% static 'image/table.png' %}">
             </div>
 
         </div>
