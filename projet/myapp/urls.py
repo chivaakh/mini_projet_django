@@ -12,4 +12,7 @@ urlpatterns = [
     path('borrow/<int:book_id>/', views.borrow_book, name='borrow_book'),
     path('return/<int:borrow_id>/', views.return_book, name='return_book'),
     path('books/', views.list_books, name='list_books'),
+    path('users/', views.manage_users, name='manage_users'),
+    path('delete_user/<int:id>/', views.delete_user, name='delete_user'),
+    path('update_user/<int:id>/', views.update_user, name='update_user'),
 ]
