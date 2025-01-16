@@ -128,3 +128,25 @@ def return_book(request, borrow_id):
         messages.success(request, "Livre retourné avec succès.")
     return redirect('books_list')
 
+
+def manage_users(request):
+    query = request.GET.get('q', '')  # Récupération de la recherche
+    if query:
+        users = MyUser.objects.filter(
+            email__icontains=query) | MyUser.objects.filter(name__icontains=query)
+    else:
+        users = MyUser.objects.all()
+    return render(request, 'manage_users.html', {'users': users, 'query': query})
+
+def delete_user(request, id):
+    user = get_object_or_404(MyUser, id=id)
+    user.delete()
+    return redirect('manage_users')
+
+def update_user(request, id):
+    user = get_object_or_404(MyUser, id=id)
+    if request.method == 'POST':
+        user.email = request.POST.get('email')
+        user.save()
+        return redirect('manage_users')
+    return render(request, 'update_user.html', {'user': user})
